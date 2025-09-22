@@ -8,47 +8,31 @@ const Footer = () => {
   return (
     <Section crosses className="!px-0 !py-10 text-n-2">
       <div className="container flex justify-around items-center gap-10 max-sm:flex-col">
-       
-        <div className="  ">
+        
+        {/* Logo Section */}
+        <div className="flex flex-col items-center">
           <a href="#hero">
             <img src={MainLogo} width={230} height={28} alt="Buddy Forum Logo" />
           </a>
-          <Button className="w-[12rem] mb-6 mt-5" white href="/app" >
-            App Link
-          </Button>
+          <p className="mt-4 text-n-3 text-center max-w-xs">Your trusted platform for submitting and tracking complaints efficiently.</p>
         </div>
 
-       
-        <div className="items-center">
-          <div className="flex flex-col justify-center">
-            <h5 className="h5 mb-8 text-center">Our Team</h5>
-            <div className="flex flex-wrap justify-center gap-x-10">
-              <div className="flex flex-col mb-6">
-                <a href="https://github.com/NakshatraSirohi" className="mb-4 flex items-center text-n-3">
-                  <Arrow /> Nakshatra
-                </a>
-                <a href="https://github.com/" className="mb-4 flex items-center text-n-3">
-                  <Arrow /> Ritik
-                </a>
-                <a href="https://github.com/" className="mb-4 flex items-center text-n-3">
-                  <Arrow /> Prabhakar
-                </a>
-               
-              </div>
-
-              <div className="flex flex-col mb-6">
-              <a href="https://github.com/" className="mb-4 flex items-center text-n-3">
-                  <Arrow /> Robin
-                </a>
-               
-                <a href="https://github.com/" className="mb-4 flex items-center text-n-3">
-                  <Arrow /> Namrata
-                </a>
-                <a href="https://github.com/ItsNehaOjha" className="mb-4 flex items-center text-n-3">
-                  <Arrow /> Neha Ojha
-                </a>
-              </div>
-            </div>
+        {/* Quick Links */}
+        <div className="flex flex-col items-center">
+          <h5 className="h5 mb-4 text-center">Quick Links</h5>
+          <div className="flex flex-col">
+            <a href="/" className="mb-3 flex items-center text-n-3">
+              <Arrow /> Home
+            </a>
+            <a href="/complain" className="mb-3 flex items-center text-n-3">
+              <Arrow /> Submit Complaint
+            </a>
+            <a href="/contact" className="mb-3 flex items-center text-n-3">
+              <Arrow /> Contact Us
+            </a>
+            <a href="/roadmap" className="mb-3 flex items-center text-n-3">
+              <Arrow /> Roadmap
+            </a>
           </div>
         </div>
 
@@ -70,9 +54,11 @@ const Footer = () => {
             </a>
           </div>
         </div>
-
-        {/* Copyright Section */}
-        <p className="mt-6 text-center text-n-2 whitespace-nowrap">© {new Date().getFullYear()}. All rights reserved.</p>
+      </div>
+      
+      {/* Copyright Section */}
+      <div className="container mt-8">
+        <p className="text-center text-n-2 whitespace-nowrap">© {new Date().getFullYear()}. All rights reserved.</p>
       </div>
     </Section>
   );

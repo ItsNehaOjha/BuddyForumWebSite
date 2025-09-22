@@ -16,7 +16,6 @@ import Contact from "./pages/Contact";
 
 import Notification from "./pages/notification/NotificationPage";
 import Notes from "./pages/Notes";
-import AppLink from "./pages/AppLink";
 import Roadmap from "./pages/Roadmap";
 
 // Components for all pages
@@ -93,7 +92,6 @@ const App = () => {
               <Route path="/resetPassword/:token" element={<ResetPassword />} />
               <Route path="/contact" element={<Contact />} /> 
               <Route path="/notes" element={<Notes />} /> 
-              <Route path="/app" element={<AppLink />} />
               <Route path="/roadmap" element={<Roadmap />} /> 
             </Routes>
             
