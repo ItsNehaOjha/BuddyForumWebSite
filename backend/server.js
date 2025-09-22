@@ -10,7 +10,7 @@ import connectMongoDB from "./db/connectMongoDB.js";
 
 dotenv.config();
 cloudinary.config ({
-    cloud_name: "drsaay0v",
+    cloud_name: "dsaay0v",
     api_key: "226395533919326",
     api_secret: "yyk-hceSnTlTnqOdg1dzmw5ZJU8",
 })
@@ -18,8 +18,8 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const __dirname = path.resolve()
 app.use(cookieParser());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Use routes 
 app.use("/api/auth", authRoutes);

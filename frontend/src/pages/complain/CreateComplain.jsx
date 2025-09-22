@@ -35,25 +35,32 @@ const CreateComplain = () => {
   } = useMutation({
     mutationFn: async ({ title, text, img, categories }) => {
       try {
+        console.log("Sending data to server:", { title, categories, imgLength: img ? img.length : 0 });
         
         const res = await fetch("/api/complaints/create", {
           method: "POST",
-          
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ title, text, img, categories }),
+          body: JSON.stringify({ 
+            title, 
+            text, 
+            img, 
+            categories: categories.length > 0 ? categories : ["General Issue"] 
+          }),
         });
         
         console.log("Response Status:", res.status); 
         const data = await res.json();
         console.log("Response Data:", data); // Log response data
         if (!res.ok) {
+          console.error("Error response:", data);
           throw new Error(data.error || "Something went wrong while submitting the complaint.");
         }
 
         return data;
       } catch (error) {
+        console.error("Submission error:", error);
         throw new Error(error.message || "An error occurred.");
       }
     },
@@ -76,13 +83,27 @@ const CreateComplain = () => {
   });
 
   const handleSubmit = (e) => {
-    e.preventDefault(); 
-
+    e.preventDefault();
+    
+    // Validate title
+    if (!title.trim()) {
+      toast.error("Title is required");
+      return;
+    }
+    
+    // Validate image if present
+    if (img && img.length > 10000000) {
+      toast.error("Image size is too large");
+      return;
+    }
+    
+    console.log("Submitting with title:", title);
+    
     createComplaint({
-        title,
+        title: title.trim(),
         text,
         img,
-        categories: selectedCategories,
+        categories: selectedCategories.length > 0 ? selectedCategories : ["General Issue"],
     });
 };
 
@@ -90,9 +111,20 @@ const CreateComplain = () => {
   const handleImgChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      // Check file size (limit to 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error("Image size should be less than 5MB");
+        return;
+      }
+      
       const reader = new FileReader();
       reader.onload = () => {
         setImg(reader.result);
+        console.log("Image loaded successfully");
+      };
+      reader.onerror = () => {
+        console.error("Error reading file");
+        toast.error("Error reading file");
       };
       reader.readAsDataURL(file);
     }

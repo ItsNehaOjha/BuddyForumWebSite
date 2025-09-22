@@ -39,22 +39,24 @@ export const submitComplaint = async (req, res) => {
         if (img) {
             console.log("Uploading image to Cloudinary...");
             try {
-                // Configure cloudinary
-                cloudinary.config({
-                    cloud_name: "drsaay0v",
-                    api_key: "226395533919326",
-                    api_secret: "yyk-hceSnTlTnqOdg1dzmw5ZJU8"
-                });
+                // No need to configure cloudinary here - it's already configured in server.js
                 
+                // Handle base64 image data
                 const result = await cloudinary.uploader.upload(img, {
                     resource_type: "auto", // Handles images, videos, etc.
+                    folder: "buddyforum", // Store in a specific folder
+                    overwrite: true,
+                    invalidate: true
                 });
                 console.log("Cloudinary upload result:", result);
                 uploadedFile = result.secure_url;
                 fileType = result.resource_type;
             } catch (uploadError) {
-                console.error("Cloudinary upload failed:", uploadError.message);
-                return res.status(500).json({ error: "File upload failed. Please try again." });
+                console.error("Cloudinary upload failed:", uploadError);
+                // Don't return here, just log the error and continue without the image
+                uploadedFile = null;
+                fileType = null;
+                // Let the complaint be created without an image
             }
         }
 
