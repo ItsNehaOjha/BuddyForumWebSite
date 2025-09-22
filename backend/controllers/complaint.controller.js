@@ -39,24 +39,22 @@ export const submitComplaint = async (req, res) => {
         if (img) {
             console.log("Uploading image to Cloudinary...");
             try {
-                // No need to configure cloudinary here - it's already configured in server.js
+                // Configure cloudinary
+                cloudinary.config({
+                    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+                    api_key: process.env.CLOUDINARY_API_KEY,
+                    api_secret: process.env.CLOUDINARY_API_SECRET
+                });
                 
-                // Handle base64 image data
                 const result = await cloudinary.uploader.upload(img, {
                     resource_type: "auto", // Handles images, videos, etc.
-                    folder: "buddyforum", // Store in a specific folder
-                    overwrite: true,
-                    invalidate: true
                 });
                 console.log("Cloudinary upload result:", result);
                 uploadedFile = result.secure_url;
                 fileType = result.resource_type;
             } catch (uploadError) {
-                console.error("Cloudinary upload failed:", uploadError);
-                // Don't return here, just log the error and continue without the image
-                uploadedFile = null;
-                fileType = null;
-                // Let the complaint be created without an image
+                console.error("Cloudinary upload failed:", uploadError.message);
+                return res.status(500).json({ error: "File upload failed. Please try again." });
             }
         }
 
@@ -68,7 +66,7 @@ export const submitComplaint = async (req, res) => {
             categories: categories[0],
             severity: getSeverityFromUpvotes(0), // Default severity
             attachments: uploadedFile ? [{ fileUrl: uploadedFile, fileType }] : [],
-            img: uploadedFile // Add the image URL directly to the complaint for easier access
+            img: uploadedFile // Keep this for backward compatibility
         });
 
         await newComplaint.save();

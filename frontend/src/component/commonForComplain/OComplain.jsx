@@ -3,10 +3,12 @@ import { FaThumbsUp, FaTrash } from "react-icons/fa";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
 import LoadingSpinner from "./LoadingSpinner";
+import { useState } from "react";
+import { IoClose } from "react-icons/io5";
 
 const OComplain = ({ complaint }) => {
   const queryClient = useQueryClient();
-
+  const [showModal, setShowModal] = useState(false);
 
   // Fetch authenticated user data
   const { data: authUser } = useQuery({ queryKey: ["authUser"] });
@@ -26,13 +28,12 @@ const OComplain = ({ complaint }) => {
       return res.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["complaints"] }); // Refetch complaints not a good method bcz whole page is loading
+      queryClient.invalidateQueries({ queryKey: ["complaints"] });
     },
     onError: (error) => {
       toast.error(error.message);
     },
   });
-
 
   // Delete mutation
   const { mutate: deleteComplaint, isPending: isDeleting } = useMutation({
@@ -50,7 +51,7 @@ const OComplain = ({ complaint }) => {
     },
     onSuccess: () => {
       toast.success("Complaint deleted successfully");
-      queryClient.invalidateQueries({ queryKey: ["complaints"] }); // Refetch complaints
+      queryClient.invalidateQueries({ queryKey: ["complaints"] });
     },
     onError: (error) => {
       toast.error(error.message);
@@ -76,6 +77,9 @@ const OComplain = ({ complaint }) => {
   const likesCount = (complaint.upvotes || []).length;
   const isUpvoted = (complaint.upvotes || []).includes(authUser?._id);
 
+  // Get image source
+  const imageSource = complaint.img || (complaint.attachments && complaint.attachments.length > 0 && complaint.attachments[0].fileUrl);
+
   return (
     <div className="p-7 border-b border-gray-700 flex flex-col gap-7">
       {/* Complaint Title */}
@@ -96,21 +100,45 @@ const OComplain = ({ complaint }) => {
         </div>
       </div>
 
-      {/* Complaint Image */}
-      {complaint.img && (
-        <img
-          src={complaint.img}
-          className="h-60 object-cover rounded-lg border border-gray-700 mt-3"
-          alt="Complaint Image"
-        />
+      {/* Complaint Image - Single compact display */}
+      {imageSource && (
+        <div className="flex justify-center">
+          <div 
+            className="w-40 h-40 rounded-lg border border-gray-700 mt-3 overflow-hidden cursor-pointer"
+            onClick={() => setShowModal(true)}
+          >
+            <img
+              src={imageSource}
+              className="w-full h-full object-cover"
+              alt="Complaint Image"
+              onError={(e) => {
+                console.error("Image failed to load:", e);
+                e.target.style.display = 'none';
+              }}
+            />
+          </div>
+        </div>
       )}
-      {/* Display attachments if img is not available */}
-      {!complaint.img && complaint.attachments && complaint.attachments.length > 0 && (
-        <img
-          src={complaint.attachments[0].fileUrl}
-          className="h-60 object-cover rounded-lg border border-gray-700 mt-3"
-          alt="Complaint Attachment"
-        />
+
+      {/* Image Modal */}
+      {showModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75" onClick={() => setShowModal(false)}>
+          <div className="relative bg-gray-900 p-2 rounded-lg max-w-3xl max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
+            <button 
+              className="absolute top-2 right-2 text-white bg-red-500 rounded-full p-1"
+              onClick={() => setShowModal(false)}
+            >
+              <IoClose size={20} />
+            </button>
+            <div className="overflow-auto">
+              <img 
+                src={imageSource} 
+                alt="Full size image" 
+                className="max-h-[80vh] max-w-full object-contain"
+              />
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Actions: Upvote and Delete */}

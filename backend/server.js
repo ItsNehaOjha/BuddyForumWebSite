@@ -10,15 +10,17 @@ import connectMongoDB from "./db/connectMongoDB.js";
 
 dotenv.config();
 cloudinary.config ({
-    cloud_name: "dsaay0v",
-    api_key: "226395533919326",
-    api_secret: "yyk-hceSnTlTnqOdg1dzmw5ZJU8",
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret:process.env.CLOUDINARY_API_SECRET,
 })
 const app = express();
 const PORT = process.env.PORT || 5000;
 const __dirname = path.resolve()
 app.use(cookieParser());
+// Increase JSON payload size limit to 50MB
 app.use(express.json({ limit: '50mb' }));
+// Increase URL-encoded payload size limit to 50MB
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Use routes 
