@@ -1,27 +1,46 @@
 import LoadingSpinner from "../../component/commonForComplain/LoadingSpinner";
 import { IoSettingsOutline } from "react-icons/io5";
 import { FaThumbsUp, FaArrowUp } from "react-icons/fa";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-hot-toast";
 
 const NotificationPage = () => {
-  const isLoading = false;
-  const notifications = [
-    {
-      _id: "1",
-      rollNo: "2301420100153",
-      type: "upvote",
-      complainTitle: "WiFi Connectivity Issue",
+  const queryClient = useQueryClient();
+
+  // Fetch notifications
+  const { data: notifications, isLoading, isError } = useQuery({
+    queryKey: ["notifications"],
+    queryFn: async () => {
+      const res = await fetch("/api/notifications");
+      if (!res.ok) {
+        throw new Error("Failed to fetch notifications");
+      }
+      return res.json();
     },
-    {
-      _id: "2",
-      rollNo: "2301420100154",
-      type: "statusUpdate",
-      complainTitle: "Broken Chair in Library",
-      severity: "Major",
+  });
+
+  // Delete notifications mutation
+  const { mutate: deleteNotificationsMutation } = useMutation({
+    mutationFn: async () => {
+      const res = await fetch("/api/notifications", {
+        method: "DELETE",
+      });
+      if (!res.ok) {
+        throw new Error("Failed to delete notifications");
+      }
+      return res.json();
     },
-  ];
+    onSuccess: () => {
+      toast.success("All notifications deleted");
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
 
   const deleteNotifications = () => {
-    alert("All notifications deleted");
+    deleteNotificationsMutation();
   };
 
   return (
@@ -63,7 +82,7 @@ const NotificationPage = () => {
             {notification.type === "upvote" && (
               <FaThumbsUp className="w-7 h-7 text-blue-500" />
             )}
-            {notification.type === "statusUpdate" && (
+            {notification.type === "status" && (
               <FaArrowUp className="w-7 h-7 text-green-500" />
             )}
 
@@ -71,19 +90,23 @@ const NotificationPage = () => {
             <div>
               {notification.type === "upvote" && (
                 <div className="flex gap-1">
-                  <span className="font-bold text-info">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;someone</span>{" "}
+                  <span className="font-bold text-info">{notification.from?.name || "Someone"}</span>{" "}
                   upvoted your complaint:{" "}
-                  <span className="text-info">{notification.complainTitle}</span>
+                  <span className="text-info">{notification.complaint?.title || "Unknown complaint"}</span>
                 </div>
               )}
-              {notification.type === "statusUpdate" && (
-                <div className="flex gap-1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                  Complaint{" "}
-                  <span className="text-secondary">
-                    {notification.complainTitle}
-                  </span>{" "}
-                  status updated to{" "}
-                  <span className="font-bold">{notification.severity}</span>
+              {notification.type === "status" && (
+                <div className="flex gap-1">
+                  {notification.message || (
+                    <>
+                      Complaint{" "}
+                      <span className="text-secondary">
+                        {notification.complaint?.title || "Unknown complaint"}
+                      </span>{" "}
+                      status updated to{" "}
+                      <span className="font-bold">{notification.complaint?.status || "unknown"}</span>
+                    </>
+                  )}
                 </div>
               )}
             </div>

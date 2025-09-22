@@ -13,7 +13,7 @@ const getSeverityFromUpvotes = (upvotes) => {
 
 export const submitComplaint = async (req, res) => {
     try {
-        const { title, text, categories, file } = req.body;
+        const { title, text, categories, img } = req.body;
         console.log("Received data by controller:", req.body);
         console.log(req.body.categories);
         if (!req.user || !req.user._id) {
@@ -36,10 +36,17 @@ export const submitComplaint = async (req, res) => {
         let uploadedFile = null;
         let fileType = null;
 
-        if (file) {
-            console.log("Uploading file to Cloudinary...");
+        if (img) {
+            console.log("Uploading image to Cloudinary...");
             try {
-                const result = await cloudinary.uploader.upload(file, {
+                // Configure cloudinary
+                cloudinary.config({
+                    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+                    api_key: process.env.CLOUDINARY_API_KEY,
+                    api_secret: process.env.CLOUDINARY_API_SECRET
+                });
+                
+                const result = await cloudinary.uploader.upload(img, {
                     resource_type: "auto", // Handles images, videos, etc.
                 });
                 console.log("Cloudinary upload result:", result);
@@ -59,6 +66,7 @@ export const submitComplaint = async (req, res) => {
             categories: categories[0],
             severity: getSeverityFromUpvotes(0), // Default severity
             attachments: uploadedFile ? [{ fileUrl: uploadedFile, fileType }] : [],
+            img: uploadedFile // Add the image URL directly to the complaint for easier access
         });
 
         await newComplaint.save();
@@ -221,8 +229,12 @@ export const getAllComplaints = async (req, res) => {
         if (status) filter.status = status;
         if (severity) filter.severity = severity;
 
-        // Fetch complaints without pagination, sorted by newest first
-        const complaints = await Complaint.find(filter).sort({ createdAt: -1 })
+        // Fetch complaints and sort by upvotes count in descending order
+        const complaints = await Complaint.aggregate([
+            { $match: filter },
+            { $addFields: { upvoteCount: { $size: "$upvotes" } } },
+            { $sort: { upvoteCount: -1 } }
+        ]);
 
         res.status(200).json({ complaints });
     } catch (error) {

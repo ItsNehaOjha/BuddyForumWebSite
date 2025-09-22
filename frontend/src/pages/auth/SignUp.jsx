@@ -90,7 +90,7 @@ const SignUpPage = () => {
 							<input
 								type='text'
 								className='grow'
-								placeholder='Roll No in format: 2301430100___'
+								placeholder='University ID (at least 11 digits)'
 								name='rollNo'
 								onChange={handleInputChange}
 								value={formData.rollNo}

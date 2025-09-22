@@ -83,7 +83,6 @@ const CreateComplain = () => {
         text,
         img,
         categories: selectedCategories,
-
     });
 };
 

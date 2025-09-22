@@ -71,7 +71,7 @@ const OtherComplaints = ({ feedType }) => {
       )}
       {!isLoading && !isRefetching && complaints?.length > 0 && (
         <div>
-          {complaints.reverse().map((complaint) => (
+          {complaints.map((complaint) => (
             <OComplain key={complaint._id} complaint={complaint} />
           ))}
         </div>

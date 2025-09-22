@@ -104,6 +104,14 @@ const OComplain = ({ complaint }) => {
           alt="Complaint Image"
         />
       )}
+      {/* Display attachments if img is not available */}
+      {!complaint.img && complaint.attachments && complaint.attachments.length > 0 && (
+        <img
+          src={complaint.attachments[0].fileUrl}
+          className="h-60 object-cover rounded-lg border border-gray-700 mt-3"
+          alt="Complaint Attachment"
+        />
+      )}
 
       {/* Actions: Upvote and Delete */}
       <div className="flex justify-around items-center mt-3 ml-11 mr-11">
