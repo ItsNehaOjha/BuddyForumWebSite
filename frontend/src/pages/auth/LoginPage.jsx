@@ -52,11 +52,12 @@ const LoginPage = () => {
 	return (
 		<div className="max-w-screen-xl mx-auto mt-0 flex h-screen px-10">
 			<div className="flex-1 hidden lg:flex items-center justify-center">
-				<Link to="/complain">
+				<Link to="/">
 					<img
 						className="w-full h-full object-cover"
 						src={fevicon1}
 						alt="buddyForum"
+						
 					/>
 				</Link>
 			</div>
@@ -69,6 +70,7 @@ const LoginPage = () => {
 						className="w-24 lg:hidden object-cover"
 						src={fevicon1}
 						alt="buddyForum"
+						onClick={() => navigate('/')}
 					/>
 					<h1 className="text-4xl font-extrabold text-white">{"Let's"} go.</h1>
 					<label className="input border-n-1/10 rounded flex items-center bg-n-8 gap-2">
