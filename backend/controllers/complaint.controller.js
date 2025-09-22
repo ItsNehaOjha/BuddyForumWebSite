@@ -41,9 +41,9 @@ export const submitComplaint = async (req, res) => {
             try {
                 // Configure cloudinary
                 cloudinary.config({
-                    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-                    api_key: process.env.CLOUDINARY_API_KEY,
-                    api_secret: process.env.CLOUDINARY_API_SECRET
+                    cloud_name: "drsaay0v",
+                    api_key: "226395533919326",
+                    api_secret: "yyk-hceSnTlTnqOdg1dzmw5ZJU8"
                 });
                 
                 const result = await cloudinary.uploader.upload(img, {

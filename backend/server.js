@@ -10,9 +10,9 @@ import connectMongoDB from "./db/connectMongoDB.js";
 
 dotenv.config();
 cloudinary.config ({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret:process.env.CLOUDINARY_API_SECRET,
+    cloud_name: "drsaay0v",
+    api_key: "226395533919326",
+    api_secret: "yyk-hceSnTlTnqOdg1dzmw5ZJU8",
 })
 const app = express();
 const PORT = process.env.PORT || 5000;
